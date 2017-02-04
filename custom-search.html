@@ -1,7 +1,7 @@
 <!-- Defines element markup -->
 <template>
-	<form>
-		<input type="text"/><button>Poots</button>
+	<form action="#">
+		<input type="text"/><button>Search</button>
 	</form>
 </template>
 
@@ -19,8 +19,8 @@
 		// Creates an object based in the HTML Element prototype
 		var elementPrototype = Object.create(HTMLElement.prototype);
 
-		// Creates the "searchValue" attribute and sets a default value
-		elementPrototype.searchValue = 'Search...';
+		// Creates the "value" attribute and sets a default value
+		elementPrototype.value = 'Search...';
 
 		// Fires when an instance of the element is created
 		elementPrototype.createdCallback = function() {
@@ -31,21 +31,45 @@
 			var clone = parentDoc.importNode(template, true);
 			shadowRoot.appendChild(clone);
 
-			// Caches <strong> DOM query
+			// Caches DOM queries
 			this.input = shadowRoot.querySelector('input');
+			this.button = shadowRoot.querySelector('button');
 
-			// Checks if the "searchValue" attribute has been overwritten
-			if (this.hasAttribute('searchValue')) {
-				var searchValue = this.getAttribute('searchValue');
-				this.set(searchValue);
+			// Listen for "Enter" presses on the input of the search field
+			this.input.onkeypress = function(e) {
+				if (!e) e = window.event;
+				var keyCode = e.keyCode || e.which;
+				if (keyCode == '13') {
+					// Enter pressed
+					console.log(shadowRoot.querySelector('input').value);
+					return false;
+				}
+			}
+
+			// Keep "value" up to date
+			this.input.onkeydown = function() {
+				elementPrototype.value = shadowRoot.querySelector('input').value;
+			}
+
+			// Listen for clicks on the "Search" button
+			this.button.onclick = function() {
+				console.log(shadowRoot.querySelector('input').value);
+			}
+
+			// Checks if the "value" attribute has been overwritten
+			if (this.hasAttribute('value')) {
+				var value = this.getAttribute('value');
+				this.set(value);
 			} else {
-				this.set(this.searchValue);
+				this.set(this.value);
 			}
 		};
 
 		// Fires when an attribute was added, removed, or updated
 		elementPrototype.attributeChangedCallback = function(attr, oldVal, newVal) {
-			if (attr === 'searchValue') {
+			console.log(attr);
+
+			if (attr === 'value') {
 				this.set(newVal);
 			}
 		};
