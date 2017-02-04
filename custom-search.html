@@ -57,8 +57,8 @@
         this.strong.textContent = this.who;
     };
 
-    // Registers <search> in the main document
-    window.MyElement = thatDoc.registerElement('search', {
+    // Registers <custom-search> in the main document
+    window.MyElement = thatDoc.registerElement('custom-search', {
         prototype: MyElementProto
     });
 })(window, document);
