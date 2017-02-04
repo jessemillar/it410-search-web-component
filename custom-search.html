@@ -1,65 +1,68 @@
 <!-- Defines element markup -->
 <template>
-    <p>Hello <strong></strong> :)</p>
+	<form>
+		<input type="text"/><button>Poots</button>
+	</form>
 </template>
 
 <script>
-(function(window, document, undefined) {
-    // Refers to the "importer", which is index.html
-    var thatDoc = document;
+	(function(window, document, undefined) {
+		// Refers to the "importer", which is index.html
+		var parentDoc = document;
 
-    // Refers to the "importee", which is src/search.html
-    var thisDoc =  (thatDoc._currentScript || thatDoc.currentScript).ownerDocument;
+		// Refers to the "importee", which is src/custom-search.html
+		var thisDoc = (parentDoc._currentScript || parentDoc.currentScript).ownerDocument;
 
-    // Gets content from <template>
-    var template = thisDoc.querySelector('template').content;
+		// Gets content from <template>
+		var template = thisDoc.querySelector('template').content;
 
-    // Creates an object based in the HTML Element prototype
-    var MyElementProto = Object.create(HTMLElement.prototype);
+		// Creates an object based in the HTML Element prototype
+		var elementPrototype = Object.create(HTMLElement.prototype);
 
-    // Creates the "who" attribute and sets a default value
-    MyElementProto.who = 'World';
+		// Creates the "searchValue" attribute and sets a default value
+		elementPrototype.searchValue = 'Search...';
 
-    // Fires when an instance of the element is created
-    MyElementProto.createdCallback = function() {
-        // Creates the shadow root
-        var shadowRoot = this.createShadowRoot();
+		// Fires when an instance of the element is created
+		elementPrototype.createdCallback = function() {
+			// Creates the shadow root
+			var shadowRoot = this.createShadowRoot();
 
-        // Adds a template clone into shadow root
-        var clone = thatDoc.importNode(template, true);
-        shadowRoot.appendChild(clone);
+			// Adds a template clone into shadow root
+			var clone = parentDoc.importNode(template, true);
+			shadowRoot.appendChild(clone);
 
-        // Caches <strong> DOM query
-        this.strong = shadowRoot.querySelector('strong');
+			// Caches <strong> DOM query
+			this.input = shadowRoot.querySelector('input');
 
-        // Checks if the "who" attribute has been overwritten
-        if (this.hasAttribute('who')) {
-            var who = this.getAttribute('who');
-            this.setWho(who);
-        }
-        else {
-            this.setWho(this.who);
-        }
-    };
+			// Checks if the "searchValue" attribute has been overwritten
+			if (this.hasAttribute('searchValue')) {
+				var searchValue = this.getAttribute('searchValue');
+				this.set(searchValue);
+			} else {
+				this.set(this.searchValue);
+			}
+		};
 
-    // Fires when an attribute was added, removed, or updated
-    MyElementProto.attributeChangedCallback = function(attr, oldVal, newVal) {
-        if (attr === 'who') {
-            this.setWho(newVal);
-        }
-    };
+		// Fires when an attribute was added, removed, or updated
+		elementPrototype.attributeChangedCallback = function(attr, oldVal, newVal) {
+			if (attr === 'searchValue') {
+				this.set(newVal);
+			}
+		};
 
-    // Sets new value to "who" attribute
-    MyElementProto.setWho = function(val) {
-        this.who = val;
+		// Sets new value of the search field
+		elementPrototype.set = function(val) {
+			this.input.value = val;
+		};
 
-        // Sets "who" value into <strong>
-        this.strong.textContent = this.who;
-    };
+		// Gets the value of the search field
+		elementPrototype.get = function() {
+			return this.input.value;
+		};
 
-    // Registers <custom-search> in the main document
-    window.MyElement = thatDoc.registerElement('custom-search', {
-        prototype: MyElementProto
-    });
-})(window, document);
+		// Registers <custom-search> in the main document
+		window.MyElement = parentDoc.registerElement('custom-search', {
+			prototype: elementPrototype
+		});
+	})(window, document);
 </script>
