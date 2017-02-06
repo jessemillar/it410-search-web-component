@@ -19,9 +19,6 @@
 		// Creates an object based in the HTML Element prototype
 		var elementPrototype = Object.create(HTMLElement.prototype);
 
-		// Creates the "value" attribute and sets a default value
-		elementPrototype.value = 'Search...';
-
 		// Fires when an instance of the element is created
 		elementPrototype.createdCallback = function() {
 			// Creates the shadow root
@@ -67,8 +64,6 @@
 
 		// Fires when an attribute was added, removed, or updated
 		elementPrototype.attributeChangedCallback = function(attr, oldVal, newVal) {
-			console.log(attr);
-
 			if (attr === 'value') {
 				this.set(newVal);
 			}
