@@ -1,23 +1,19 @@
 (function() {
 	var template = `
 		<form action="#">
-			<input type="text"/><button>Search</button>
+			<input type="text"/><button type="submit">Search</button>
 		</form>
 	`;
 
 	// Create a class for the element
 	class SearchInput extends HTMLElement {
 		get value() {
-			console.log(this.search.value);
-			return this.search.value;
+			return this.shadowRoot.querySelector("input").value;
 		}
 
 		set value(newValue) {
-			console.log(newValue);
 			this.shadowRoot.querySelector("input").value = newValue;
-			this.shadowRoot.setAttribute("value", newValue);
-			// this.search.value = newValue;
-            // this.setAttribute("value", newValue)
+			this.setAttribute("value", newValue);
 		}
 
 		constructor() {
@@ -31,18 +27,9 @@
 
 			shadowRoot.innerHTML = template;
 
-			// Create a standard search element and set it"s attributes.
-			var search = this.shadowRoot.querySelector("input");
-
-			// Add an event listener to the image.
-			search.addEventListener("onkeypress", () => {
-				if (!e) e = window.event;
-				var keyCode = e.keyCode || e.which;
-				if (keyCode == "13") {
-					// Enter pressed
-					console.log(search.value);
-					return false;
-				}
+			// Add a typing listener to the input field
+			shadowRoot.querySelector("form").addEventListener("submit", function() {
+				console.log(shadowRoot.querySelector("input").value);
 			});
 		}
 	}
